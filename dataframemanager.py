@@ -47,7 +47,7 @@ class DataManager():
         self.y_test = None
         self.set_train_val_test_sets()
         self.impute_means()
-        # self.scale_train_val_test_sets()
+        self.scale_train_val_test_sets()
 
     def set_train_val_test_sets(self):
         val_plus_test_prop = self.val_prop + self.test_prop
@@ -122,14 +122,10 @@ class DataManager():
 
     def scale_x_and_y(self, x, y, fit_scaler=False):
         if fit_scaler:
-            print('one')
             x_non_cats = self.x_scaler.fit_transform(x[self.x_non_cats])
-            print('two')
             y = self.y_scaler.fit_transform(y.to_frame())
         else:
-            print('three')
             x_non_cats = self.x_scaler.transform(x[self.x_non_cats])
-            print('four')
             y = self.y_scaler.transform(y.to_frame())
 
         x_cats = x[self.x_cats]
@@ -137,6 +133,7 @@ class DataManager():
         x = np.concatenate((x_non_cats, x_cats), axis=1)
 
         return x, y
+
 
 if __name__ == '__main__':
     from sklearn.preprocessing import MinMaxScaler
@@ -150,7 +147,6 @@ if __name__ == '__main__':
                        'd': [np.nan, np.nan, np.nan, np.nan, np.nan, np.nan],
                        'y': [1, 3.5, np.nan, 1.1, 3.2, 2.3],
                        'the_dates': pd.date_range(datetime.date(2018, 1, 1), datetime.datetime(2018, 1, 6))})
-
 
     dm = DataManager(df, y_col='y', val_prop=.2, test_prop=.2,
                      x_scaler=x_scaler, y_scaler=y_scaler,
