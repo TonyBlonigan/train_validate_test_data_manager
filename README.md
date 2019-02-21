@@ -44,21 +44,18 @@ print(dm.y_test)
 ```
 categorical and date columns:
 	['cat', 'the_dates']
-     a    c   d  the_dates  cat
-0  1.0  1.2 NaN 2018-01-01    0
-1  2.0  1.2 NaN 2018-01-02    0
-0    1.0
-1    3.5
-Name: y, dtype: float64
-     a    c   d  the_dates  cat
-3  3.0  1.2 NaN 2018-01-04    1
-4  2.0  4.2 NaN 2018-01-05    0
-3    1.1
-4    3.2
-Name: y, dtype: float64
-     a    c   d  the_dates  cat
-5  1.0  5.2 NaN 2018-01-06    1
-5    2.3
-Name: y, dtype: float64
+
+[[0.0 0.0 0.0 0 Timestamp('2018-01-01 00:00:00')]
+ [1.0 0.0 0.0 0 Timestamp('2018-01-02 00:00:00')]]
+[[0.]
+ [1.]]
+
+[[2.0 0.0 0.0 1 Timestamp('2018-01-04 00:00:00')]
+ [1.0 3.0 0.0 0 Timestamp('2018-01-05 00:00:00')]]
+[[0.04]
+ [0.88]]
+
+[[0.0 4.0 0.0 1 Timestamp('2018-01-06 00:00:00')]]
+[[0.52]]
 ```
 
