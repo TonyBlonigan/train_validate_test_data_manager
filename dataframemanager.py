@@ -4,7 +4,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 
 class DataManager():
-    def __init__(self, df, y_col, val_prop, test_prop, x_scaler, y_scaler, split_on_date_col=None):
+    def __init__(self, df, y_col, val_prop, test_prop, x_scaler, y_scaler, split_on_date_col=None, no_scale_cols=None):
         """
 
         :param df: data frame with generic 1-n index, categorical cols alread one hot encoded
@@ -13,6 +13,7 @@ class DataManager():
         :param test_prop: float
         :param scaler:
         :param split_on_date_col: string, column name of date to split data on. If null, will be randomly split without
+        :param no_scale_cols: list of columns you don't want scaled that are not one hot encoded or split_on_date_col
         considering date of observation
         """
         self.y_col = y_col
@@ -27,6 +28,13 @@ class DataManager():
         if self.split_on_date_col is not None:
             self.x_cats += [self.split_on_date_col]
             self.x_non_cats.remove(self.split_on_date_col)
+
+        self.no_scale_cols = no_scale_cols
+        if no_scale_cols is not None:
+            self.x_cats += self.no_scale_cols
+            for c in self.no_scale_cols:
+                self.x_non_cats.remove(c)
+
         print('categorical and date columns:\n\t' + str(self.x_cats))
 
         # drop obs with na in y_col
@@ -146,11 +154,12 @@ if __name__ == '__main__':
                        'c': [1.2, np.nan, 2.2, np.nan, 4.2, 5.2],
                        'd': [np.nan, np.nan, np.nan, np.nan, np.nan, np.nan],
                        'y': [1, 3.5, np.nan, 1.1, 3.2, 2.3],
-                       'the_dates': pd.date_range(datetime.date(2018, 1, 1), datetime.datetime(2018, 1, 6))})
+                       'the_dates': pd.date_range(datetime.date(2018, 1, 1), datetime.datetime(2018, 1, 6)),
+                       'observed_on_date': pd.date_range(datetime.date(2017, 12, 30), datetime.datetime(2018, 1, 4))})
 
     dm = DataManager(df, y_col='y', val_prop=.2, test_prop=.2,
                      x_scaler=x_scaler, y_scaler=y_scaler,
-                     split_on_date_col='the_dates')
+                     split_on_date_col='the_dates', no_scale_cols=['observed_on_date'])
 
     print(dm.x_train)
     print(dm.y_train)
