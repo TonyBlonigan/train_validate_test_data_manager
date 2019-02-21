@@ -6,6 +6,8 @@ from sklearn.model_selection import train_test_split
 class DataManager():
     def __init__(self, df, y_col, val_prop, test_prop, x_scaler, y_scaler, split_on_date_col=None, no_scale_cols=None):
         """
+        Take a cleansed data set in the form of a data frame and Split to train, test & validate sets, impute means for
+        missing values, drop rows where no values is available for the y variable
 
         :param df: data frame with generic 1-n index, categorical cols alread one hot encoded
         :param y_col: string name of column with y variable
