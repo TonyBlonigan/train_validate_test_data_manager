@@ -2,9 +2,9 @@
 
 This is designed to take a cleansed data set in the form of a data frame and
 1. Split to train, test & validate sets
-  - if you provide a `split_on_date_col` will split chronologicaly, otherwise will split randomly
+    - if you provide a `split_on_date_col` will split chronologicaly, otherwise will split randomly
 2. Impute means for missing values
-  - if no non-na values exist in training set for a given column, sets train, val and test set values for that column to 0
+    - if no non-na values exist in training set for a given column, sets train, val and test set values for that column to 0
 3. Drops rows where no values is available for the y variable
 
 The processing doesn't happen in the order outlined above.
