@@ -1,4 +1,3 @@
-import datetime
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
@@ -56,8 +55,22 @@ class DataManager():
         self.x_test = None
         self.y_test = None
         self.set_train_val_test_sets()
+
+        # keep track of dates
+        if self.split_on_date_col is not None:
+            self.x_train_dts = self.drop_split_on_date_col(self.x_train)
+            self.x_val_dts = self.drop_split_on_date_col(self.x_val)
+            self.x_test_dts = self.drop_split_on_date_col(self.x_test)
+            self.x_cols.remove(self.split_on_date_col)
+            self.x_cats.remove(self.split_on_date_col)
+
         self.impute_means()
         self.scale_train_val_test_sets()
+
+    def drop_split_on_date_col(self, df):
+        dts = df[self.split_on_date_col]
+        df.drop(columns=self.split_on_date_col, inplace=True)
+        return dts
 
     def set_train_val_test_sets(self):
         val_plus_test_prop = self.val_prop + self.test_prop
@@ -74,12 +87,12 @@ class DataManager():
                                                                                 shuffle=True,
                                                                                 seed=123)
         else:
-            self.x_train, self.x_val, self.y_train, self.y_val = self.train_test_split_date(self.df[self.x_cols],
-                                                                                            self.df[self.y_col],
+            self.x_train, self.x_val, self.y_train, self.y_val = self.train_test_split_date(x=self.df[self.x_cols],
+                                                                                            y=self.df[self.y_col],
                                                                                             test_size=val_plus_test_prop)
 
-            self.x_val, self.x_test, self.y_val, self.y_test = self.train_test_split_date(self.x_val,
-                                                                                          self.y_val,
+            self.x_val, self.x_test, self.y_val, self.y_test = self.train_test_split_date(x=self.x_val,
+                                                                                          y=self.y_val,
                                                                                           test_size=relative_test_prop)
 
     def overwrite_null_training_col(self):
@@ -94,7 +107,7 @@ class DataManager():
 
         val_freq = val_freq.cumsum()
 
-        max_test_dt = (np.abs(val_freq - test_size)).idxmin()
+        max_test_dt = (np.abs(val_freq - (1-test_size))).idxmin()
 
         test_date_mask = x[self.split_on_date_col] <= max_test_dt
 
@@ -150,7 +163,7 @@ if __name__ == '__main__':
 
     x_scaler = MinMaxScaler()
     y_scaler = MinMaxScaler()
-
+    
     df = pd.DataFrame({'a': [1, 2, 2, 3, 2, 1],
                        'cat': [0, 0, 1, 1, 0, 1],
                        'c': [1.2, np.nan, 2.2, np.nan, 4.2, 5.2],
@@ -158,11 +171,11 @@ if __name__ == '__main__':
                        'y': [1, 3.5, np.nan, 1.1, 3.2, 2.3],
                        'the_dates': pd.date_range(datetime.date(2018, 1, 1), datetime.datetime(2018, 1, 6)),
                        'observed_on_date': pd.date_range(datetime.date(2017, 12, 30), datetime.datetime(2018, 1, 4))})
-
+    
     dm = DataManager(df, y_col='y', val_prop=.2, test_prop=.2,
                      x_scaler=x_scaler, y_scaler=y_scaler,
                      split_on_date_col='the_dates', no_scale_cols=['observed_on_date'])
-
+    
     print(dm.x_train)
     print(dm.y_train)
     print()
